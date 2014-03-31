@@ -6,9 +6,14 @@
 #define TEST_H_
 
 #define TEST(x, y) \
-	static void x##y(void); \
-	static TestRegisterer r##x##y(x##y, # x "." # y); \
-	static void x##y(void)
+	static void _test_##x##y(void); \
+	static TestRegisterer _r_test_##x##y(_test_##x##y, # x "." # y , false); \
+	static void _test_##x##y(void)
+
+#define BENCH(x, y) \
+	static void _bench_##x##y(void); \
+	static TestRegisterer _r_bench_##x##y(_bench_##x##y, # x "." # y , true); \
+	static void _bench_##x##y(void)
 
 #define ASSERT_TRUE(x) TestAssertTrue((x), __FILE__, __LINE__, "")
 #define ASSERT_EQ(x, y) TestAssertEQ((x), (y), __FILE__, __LINE__, "")
@@ -22,15 +27,20 @@
 #	define ASSERT_NEAR_MSG(x, y, abs_error, fmt, ...) TestAssertNear((x), (y), (abs_error), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #endif
 
-void RegisterTest(void (*fn)(void), const char *tname);
+void RegisterTest(void (*fn)(void), const char *tname, bool is_bench);
 void TestAssertTrue(bool condition, const char* fname, int lineno, const char* fmt, ...);
 void TestAssertEQ(int a, int b, const char* fname, int lineno, const char* fmt, ...);
 void TestAssertStrEQ(const char* a, const char* b, const char* fname, int lineno, const char* fmt, ...);
 void TestAssertNear(float a, float b, float abs_error, const char* fname, int lineno, const char* fmt, ...);
 
+int  BenchN();
+void BenchResetTimer();
+void BenchStartTimer();
+void BenchStopTimer();
+
 struct TestRegisterer {
-	TestRegisterer(void (*fn)(void), const char *s) {
-		RegisterTest(fn, s);
+	TestRegisterer(void (*fn)(void), const char *s, bool b) {
+		RegisterTest(fn, s, b);
 	}
 };
 

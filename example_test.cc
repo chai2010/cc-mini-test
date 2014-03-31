@@ -14,3 +14,27 @@ TEST(Sum, For) {
 		ASSERT_TRUE_MSG(Sum(i,i) == i*2, "i = %d", i);
 	}
 }
+
+BENCH(Sum, For500) {
+	for(int i = 0; i < BenchN(); ++i) {
+		for(int j = 0; j < 500; ++j) {
+			Sum(i, i);
+		}
+	}
+}
+
+BENCH(Sum, For1000) {
+	for(int i = 0; i < BenchN(); ++i) {
+		for(int j = 0; j < 1000; ++j) {
+			Sum(i, i);
+		}
+	}
+}
+
+BENCH(Sum, For2000) {
+	for(int i = 0; i < BenchN(); ++i) {
+		for(int j = 0; j < 2000; ++j) {
+			Sum(i, i);
+		}
+	}
+}
