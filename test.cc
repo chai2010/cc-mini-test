@@ -18,7 +18,6 @@ static std::string flag_list_regexp = "";
 static std::string flag_test_regexp = ".*";
 static std::string flag_test_bench_regexp = "";
 static std::string flag_test_bench_benchtime_second = "1";
-static bool flag_help = false;
 
 static struct { int N; double benchtime, timer_start, timer_duration; bool timer_on; } bench;
 static struct { void (*fn)(void); const char* name; bool is_bench; } tests[10000];
@@ -225,8 +224,23 @@ void BenchStopTimer() {
 	}
 }
 
+void usage(int argc, char* argv[]) {
+	printf("usage: %s\n", basename(argv[0]));
+	printf("  [-list=*.]\n");
+	printf("  [-test=*.]\n");
+	printf("  [-test.bench=]\n");
+	printf("  [-test.benchtime=1second]\n");
+	printf("  [-help]\n");
+	printf("  [-h]\n");
+}
+
 int main(int argc, char* argv[]) {
 	for(int i = 1; i < argc; ++i) {
+		if(argv[i] == std::string("-help") || argv[i] == std::string("-h")) {
+			usage(argc, argv);
+			return 0;
+		}
+
 		if(argv[i] == std::string("-list")) {
 			flag_list_regexp = ".*";
 			break;
@@ -259,18 +273,9 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 
-		flag_help = true;
-		break;
-	}
-	if(flag_help) {
-		printf("usage: %s\n", basename(argv[0]));
-		printf("  [-list=*.]\n");
-		printf("  [-test=*.]\n");
-		printf("  [-test.bench=]\n");
-		printf("  [-test.benchtime=1second]\n");
-		printf("  [-help]\n");
-		printf("  [-h]\n");
-		return 0;
+		printf("unknow flag: %s\n", argv[i]);
+		usage(argc, argv);
+		return -1;
 	}
 
 	if(!flag_list_regexp.empty()) {
