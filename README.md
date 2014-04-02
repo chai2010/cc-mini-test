@@ -76,7 +76,7 @@ If a benchmark needs some expensive setup before running, the timer may be reset
 		}
 	}
 
-	BENCH(Suit, case2) {
+	BENCH(Name, case2) {
 		BenchStopTimer();
 		auto big = NewBig();
 		BenchStartTimer();
