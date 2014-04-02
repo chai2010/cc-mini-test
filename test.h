@@ -17,17 +17,18 @@
 
 #define ASSERT_TRUE(x) TestAssertTrue((x), __FILE__, __LINE__, "")
 #define ASSERT_EQ(x, y) TestAssertEQ((x), (y), __FILE__, __LINE__, "")
-#define ASSERT_STREQ(x, y)TestAssertStrEQ((x), (y), __FILE__, __LINE__, "")
+#define ASSERT_STREQ(x, y) TestAssertStrEQ((x), (y), __FILE__, __LINE__, "")
 #define ASSERT_NEAR(x, y, abs_error) TestAssertNear((x), (y), (abs_error), __FILE__, __LINE__, "")
 
 #if !defined(_MSC_VER) || (_MSC_VER >= 1600)
 #	define ASSERT_TRUE_MSG(x, fmt, ...) TestAssertTrue((x), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #	define ASSERT_EQ_MSG(x, y, fmt, ...) TestAssertEQ((x), (y), __FILE__, __LINE__, (fmt), __VA_ARGS__)
-#	define ASSERT_STREQ_MSG(x, y, fmt, ...)TestAssertStrEQ((x), (y), __FILE__, __LINE__, (fmt), __VA_ARGS__)
+#	define ASSERT_STREQ_MSG(x, y, fmt, ...) TestAssertStrEQ((x), (y), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #	define ASSERT_NEAR_MSG(x, y, abs_error, fmt, ...) TestAssertNear((x), (y), (abs_error), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #endif
 
 void RegisterTest(void (*fn)(void), const char *tname, bool is_bench);
+
 void TestAssertTrue(bool condition, const char* fname, int lineno, const char* fmt, ...);
 void TestAssertEQ(int a, int b, const char* fname, int lineno, const char* fmt, ...);
 void TestAssertStrEQ(const char* a, const char* b, const char* fname, int lineno, const char* fmt, ...);

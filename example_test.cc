@@ -38,3 +38,52 @@ BENCH(Sum, For2000) {
 		}
 	}
 }
+
+TEST(Fibonacci, Slow) {
+	ASSERT_TRUE(FibonacciSlow(0) == 1);
+	ASSERT_TRUE(FibonacciSlow(1) == 1);
+	ASSERT_TRUE(FibonacciSlow(2) == 2);
+	ASSERT_TRUE(FibonacciSlow(3) == 3);
+	ASSERT_TRUE(FibonacciSlow(4) == 5);
+	ASSERT_TRUE(FibonacciSlow(5) == 8);
+}
+TEST(Fibonacci, Fast) {
+	ASSERT_TRUE(FibonacciFast(0) == 1);
+	ASSERT_TRUE(FibonacciFast(1) == 1);
+	ASSERT_TRUE(FibonacciFast(2) == 2);
+	ASSERT_TRUE(FibonacciFast(3) == 3);
+	ASSERT_TRUE(FibonacciFast(4) == 5);
+	ASSERT_TRUE(FibonacciFast(5) == 8);
+}
+
+BENCH(Fibonacci, Slow5) {
+	for(int i = 0; i < BenchN(); ++i) {
+		FibonacciSlow(5);
+	}
+}
+BENCH(Fibonacci, Slow10) {
+	for(int i = 0; i < BenchN(); ++i) {
+		FibonacciSlow(10);
+	}
+}
+BENCH(Fibonacci, Slow15) {
+	for(int i = 0; i < BenchN(); ++i) {
+		FibonacciSlow(15);
+	}
+}
+
+BENCH(Fibonacci, Fast5) {
+	for(int i = 0; i < BenchN(); ++i) {
+		FibonacciFast(5);
+	}
+}
+BENCH(Fibonacci, Fast10) {
+	for(int i = 0; i < BenchN(); ++i) {
+		FibonacciFast(10);
+	}
+}
+BENCH(Fibonacci, Fast15) {
+	for(int i = 0; i < BenchN(); ++i) {
+		FibonacciFast(15);
+	}
+}
