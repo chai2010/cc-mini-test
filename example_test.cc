@@ -39,6 +39,23 @@ BENCH(Sum, For2000) {
 	}
 }
 
+static int fib[10];
+
+INIT(Fibonacci, init) {
+	fib[0] = fib[1] = 1;
+	for(int i = 2; i < sizeof(fib)/sizeof(fib[0]); ++i) {
+		fib[i] = fib[i-1] + fib[i-2];
+	}
+}
+INIT(Fibonacci, initx) {
+	// ...
+}
+TEST(Fibonacci, TestInit) {
+	for(int i = 0; i < sizeof(fib)/sizeof(fib[0]); ++i) {
+		ASSERT_TRUE_MSG(FibonacciFast(i) == fib[i], "i = %d", i);
+	}
+}
+
 TEST(Fibonacci, Slow) {
 	ASSERT_TRUE(FibonacciSlow(0) == 1);
 	ASSERT_TRUE(FibonacciSlow(1) == 1);
@@ -87,3 +104,4 @@ BENCH(Fibonacci, Fast15) {
 		FibonacciFast(15);
 	}
 }
+

@@ -5,14 +5,19 @@
 #ifndef TEST_H_
 #define TEST_H_
 
+#define INIT(x, y) \
+	static void _init_##x##y(void); \
+	static TestRegisterer _r_init_##x##y(_init_##x##y, # x "." # y , "init"); \
+	static void _init_##x##y(void)
+
 #define TEST(x, y) \
 	static void _test_##x##y(void); \
-	static TestRegisterer _r_test_##x##y(_test_##x##y, # x "." # y , false); \
+	static TestRegisterer _r_test_##x##y(_test_##x##y, # x "." # y , "test"); \
 	static void _test_##x##y(void)
 
 #define BENCH(x, y) \
 	static void _bench_##x##y(void); \
-	static TestRegisterer _r_bench_##x##y(_bench_##x##y, # x "." # y , true); \
+	static TestRegisterer _r_bench_##x##y(_bench_##x##y, # x "." # y , "bench"); \
 	static void _bench_##x##y(void)
 
 #define ASSERT_TRUE(x) TestAssertTrue((x), __FILE__, __LINE__, "")
@@ -27,7 +32,7 @@
 #	define ASSERT_NEAR_MSG(x, y, abs_error, fmt, ...) TestAssertNear((x), (y), (abs_error), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #endif
 
-void RegisterTest(void (*fn)(void), const char *tname, bool is_bench);
+void RegisterTest(void (*fn)(void), const char *name, const char *type);
 
 void TestAssertTrue(bool condition, const char* fname, int lineno, const char* fmt, ...);
 void TestAssertEQ(int a, int b, const char* fname, int lineno, const char* fmt, ...);
@@ -40,8 +45,8 @@ void BenchStartTimer();
 void BenchStopTimer();
 
 struct TestRegisterer {
-	TestRegisterer(void (*fn)(void), const char *s, bool b) {
-		RegisterTest(fn, s, b);
+	TestRegisterer(void (*fn)(void), const char *name, const char* type) {
+		RegisterTest(fn, name, type);
 	}
 };
 

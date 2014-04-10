@@ -15,24 +15,25 @@
 #include <algorithm>
 
 static std::string flag_list_regexp = "";
+static std::string flag_init_regexp = ".*";
 static std::string flag_test_regexp = ".*";
 static std::string flag_test_bench_regexp = "";
 static std::string flag_test_bench_benchtime_second = "1";
 
 static struct { int N; double benchtime, timer_start, timer_duration; bool timer_on; } bench;
-static struct { void (*fn)(void); const char* name; bool is_bench; } tests[10000];
+static struct { void (*fn)(void); const char *name, *type; } tests[10000];
 static int ntests = 0;
 
-static bool has_prefix(const std::string& str, const std::string& prefix) {
+static bool strHasPrefix(const std::string& str, const std::string& prefix) {
 	return str.size() >= prefix.size()
 		&& str.compare(0, prefix.size(), prefix) == 0;
 }
-static bool has_suffix(const std::string& str, const std::string& suffix) {
+static bool strHasSuffix(const std::string& str, const std::string& suffix) {
 	return str.size() >= suffix.size()
 		&& str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
-static const char* basename(const char* fname) {
+static const char* getBaseName(const char* fname) {
 	int len = strlen(fname);
 	const char* s = fname + len;
 	while(s > fname) {
@@ -66,20 +67,20 @@ static int matchhere(const char *regexp, const char *text) {
 	return 0;
 }
 
-void RegisterTest(void (*fn)(void), const char* tname, bool is_bench) {
+void RegisterTest(void (*fn)(void), const char* name, const char* type) {
 	if(ntests >= sizeof(tests)/sizeof(tests[0])) {
-		printf("%s %s, line %d: RegisterTest failed\n", tname, basename(__FILE__), __LINE__);
+		printf("%s %s, line %d: RegisterTest failed\n", name, getBaseName(__FILE__), __LINE__);
 		exit(-1);
 	}
 	tests[ntests].fn = fn;
-	tests[ntests].name = tname;
-	tests[ntests].is_bench = is_bench;
+	tests[ntests].name = name;
+	tests[ntests].type = type;
 	ntests++;
 }
 
 void TestAssertTrue(bool condition, const char* fname, int lineno, const char* fmt, ...) {
 	if(!condition) {
-		fname = basename(fname);
+		fname = getBaseName(fname);
 		if(fmt != NULL && fmt[0] != '\0') {
 			va_list ap;
 			va_start(ap, fmt);
@@ -96,7 +97,7 @@ void TestAssertTrue(bool condition, const char* fname, int lineno, const char* f
 
 void TestAssertEQ(int a, int b, const char* fname, int lineno, const char* fmt, ...) {
 	if(a != b) {
-		fname = basename(fname);
+		fname = getBaseName(fname);
 		if(fmt != NULL && fmt[0] != '\0') {
 			va_list ap;
 			va_start(ap, fmt);
@@ -112,7 +113,7 @@ void TestAssertEQ(int a, int b, const char* fname, int lineno, const char* fmt, 
 }
 void TestAssertStrEQ(const char* a, const char* b, const char* fname, int lineno, const char* fmt, ...) {
 	if(strcmp(a, b) != 0) {
-		fname = basename(fname);
+		fname = getBaseName(fname);
 		if(fmt != NULL && fmt[0] != '\0') {
 			va_list ap;
 			va_start(ap, fmt);
@@ -128,7 +129,7 @@ void TestAssertStrEQ(const char* a, const char* b, const char* fname, int lineno
 }
 void TestAssertNear(float a, float b, float abs_error, const char* fname, int lineno, const char* fmt, ...) {
 	if(abs(a-b) > abs(abs_error)) {
-		fname = basename(fname);
+		fname = getBaseName(fname);
 		if(fmt != NULL && fmt[0] != '\0') {
 			va_list ap;
 			va_start(ap, fmt);
@@ -224,14 +225,22 @@ void BenchStopTimer() {
 	}
 }
 
-void usage(int argc, char* argv[]) {
-	printf("usage: %s\n", basename(argv[0]));
-	printf("  [-list=*.]\n");
-	printf("  [-test=*.]\n");
+static void usage(int argc, char* argv[]) {
+	printf("C++ Mini UnitTest and Benchmark Library.\n");
+	printf("https://github.com/chai2010/cc-mini-test\n");
+	printf("\n");
+
+	printf("Usage: %s\n", getBaseName(argv[0]));
+	printf("  [-list=.*]\n");
+	printf("  [-init=.*]\n");
+	printf("  [-test=.*]\n");
 	printf("  [-test.bench=]\n");
 	printf("  [-test.benchtime=1second]\n");
 	printf("  [-help]\n");
 	printf("  [-h]\n");
+	printf("\n");
+
+	printf("Report bugs to <chaishushan{AT}gmail.com>.\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -245,6 +254,10 @@ int main(int argc, char* argv[]) {
 			flag_list_regexp = ".*";
 			break;
 		}
+		if(argv[i] == std::string("-init")) {
+			flag_init_regexp = ".*";
+			continue;
+		}
 		if(argv[i] == std::string("-test")) {
 			flag_test_regexp = ".*";
 			continue;
@@ -254,19 +267,24 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 
-		if(has_prefix(argv[i], "-list=")) {
+		if(strHasPrefix(argv[i], "-list=")) {
 			flag_list_regexp = argv[i]+sizeof("-list=")-1;
 			continue;
 		}
-		if(has_prefix(argv[i], "-test=")) {
+		if(strHasPrefix(argv[i], "-init=")) {
+			flag_init_regexp = argv[i]+sizeof("-init=")-1;
+			continue;
+		}
+		if(strHasPrefix(argv[i], "-test=")) {
 			flag_test_regexp = argv[i]+sizeof("-test=")-1;
 			continue;
 		}
-		if(has_prefix(argv[i], "-test.bench=")) {
+		if(strHasPrefix(argv[i], "-test.bench=")) {
 			flag_test_bench_regexp = argv[i]+sizeof("-test.bench=")-1;
 			continue;
 		}
-		if(has_prefix(argv[i], "-test.benchtime=")) {
+
+		if(strHasPrefix(argv[i], "-test.benchtime=")) {
 			flag_test_bench_benchtime_second = argv[i]+sizeof("-test.benchtime=")-1;
 			bench.benchtime = atof(flag_test_bench_benchtime_second.c_str());
 			if(bench.benchtime <= 0.1) bench.benchtime = 1.0;
@@ -281,36 +299,67 @@ int main(int argc, char* argv[]) {
 	if(!flag_list_regexp.empty()) {
 		int total = 0;
 		for(int id = 0; id < ntests; ++id) {
-			if(match(flag_list_regexp.c_str(), tests[id].name) != 0) {
-				if(tests[id].is_bench) {
-					printf("[bench] %s\n", tests[id].name);
-				} else {
-					printf("%s\n", tests[id].name);
+			if(std::string(tests[id].type) == "init") {
+				if(match(flag_list_regexp.c_str(), tests[id].name) != 0) {
+					printf("[init] %s\n", tests[id].name);
+					total++;
 				}
-				total++;
+			}
+		}
+		for(int id = 0; id < ntests; ++id) {
+			if(std::string(tests[id].type) == "test") {
+				if(match(flag_list_regexp.c_str(), tests[id].name) != 0) {
+					printf("[test] %s\n", tests[id].name);
+					total++;
+				}
+			}
+		}
+		for(int id = 0; id < ntests; ++id) {
+			if(std::string(tests[id].type) == "bench") {
+				if(match(flag_list_regexp.c_str(), tests[id].name) != 0) {
+					printf("[bench] %s\n", tests[id].name);
+					total++;
+				}
 			}
 		}
 		printf("total %d\n", total);
 		return 0;
 	}
 
-	if(!flag_test_regexp.empty()) {
+	// run init func
+	if(!flag_init_regexp.empty()) {
 		for(int id = 0; id < ntests; ++id) {
-			if(tests[id].is_bench) continue;
-			if(match(flag_test_regexp.c_str(), tests[id].name) != 0) {
-				printf("%s ", tests[id].name);
-				tests[id].fn();
-				printf("ok\n");
+			if(std::string(tests[id].type) == "init") {
+				if(match(flag_init_regexp.c_str(), tests[id].name) != 0) {
+					printf("[init] %s ", tests[id].name);
+					tests[id].fn();
+					printf("ok\n");
+				}
 			}
 		}
 	}
 
+	// run test func
+	if(!flag_test_regexp.empty()) {
+		for(int id = 0; id < ntests; ++id) {
+			if(std::string(tests[id].type) == "test") {
+				if(match(flag_test_regexp.c_str(), tests[id].name) != 0) {
+					printf("[test] %s ", tests[id].name);
+					tests[id].fn();
+					printf("ok\n");
+				}
+			}
+		}
+	}
+
+	// run bench func
 	if(!flag_test_bench_regexp.empty()) {
 		if(bench.benchtime <= 0.1) bench.benchtime = 1.0;
 		for(int id = 0; id < ntests; ++id) {
-			if(!tests[id].is_bench) continue;
-			if(match(flag_test_bench_regexp.c_str(), tests[id].name) != 0) {
-				benchRun(id);
+			if(std::string(tests[id].type) == "bench") {
+				if(match(flag_test_bench_regexp.c_str(), tests[id].name) != 0) {
+					benchRun(id);
+				}
 			}
 		}
 	}
