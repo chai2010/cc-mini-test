@@ -2,6 +2,8 @@
 
 This package implements a C++ mini unittest and benchmark library.
 
+Talk: [C++迷你单元测试和基准测试库](http://chai2010-talks.appspot.com/chai2010.talks/chai2010-cc-mini-test-intro.slide) .
+
 ## Unittest
 
 Use `TEST` define a unit test:
