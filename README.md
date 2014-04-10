@@ -93,7 +93,7 @@ If a benchmark needs some expensive setup before running, the timer may be reset
 
 ## Init and Exit
 
-We can use `INIT` define init func, and use `EXIT` exit func:
+We can use `INIT` define a init func, and use `EXIT` define a exit func:
 
 	INIT(Fibonacci, init) {
 		// do some init work
@@ -102,7 +102,7 @@ We can use `INIT` define init func, and use `EXIT` exit func:
 		// do some clear work
 	}
 
-The init funcs run before the tests, the exit funcs rub after the tests.
+The init funcs run before the tests, the exit funcs run after the tests.
 
 ## Usage
 
