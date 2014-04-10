@@ -48,8 +48,12 @@ INIT(Fibonacci, init) {
 	}
 }
 INIT(Fibonacci, initx) {
-	// ...
+	// do some init work
 }
+EXIT(Fibonacci, exit) {
+	// do some clear work
+}
+
 TEST(Fibonacci, TestInit) {
 	for(int i = 0; i < sizeof(fib)/sizeof(fib[0]); ++i) {
 		ASSERT_TRUE_MSG(FibonacciFast(i) == fib[i], "i = %d", i);

@@ -38,26 +38,6 @@ Run test: `./a.out` (or `./a.out -test=regexp`):
 	[test] Fibonacci.All ok
 	PASS
 
-We can also use `INIT` define some init funcs (this is optional):
-
-	static int fib[10]; // global test data
-
-	INIT(Fibonacci, init) {
-		fib[0] = fib[1] = 1;
-		for(int i = 2; i < sizeof(fib)/sizeof(fib[0]); ++i) {
-			fib[i] = fib[i-1] + fib[i-2];
-		}
-	}
-	INIT(Fibonacci, initx) {
-		// ...
-	}
-	TEST(Fibonacci, TestInit) {
-		for(int i = 0; i < sizeof(fib)/sizeof(fib[0]); ++i) {
-			ASSERT_TRUE_MSG(FibonacciFast(i) == fib[i], "i = %d", i);
-		}
-	}
-
-The init funcs run before the tests.
 
 ## Benchmark
 
@@ -110,12 +90,25 @@ If a benchmark needs some expensive setup before running, the timer may be reset
 		delete big;
 	}
 
+
+## Init and Exit
+
+We can use `INIT` define init func, and use `EXIT` exit func:
+
+	INIT(Fibonacci, init) {
+		// do some init work
+	}
+	EXIT(Fibonacci, exit) {
+		// do some clear work
+	}
+
+The init funcs run before the tests, the exit funcs rub after the tests.
+
 ## Usage
 
 	./a.out -help
 	usage: a.out
 	  [-list=.*]
-	  [-init=.*]
 	  [-test=.*]
 	  [-test.bench=]
 	  [-test.benchtime=1second]

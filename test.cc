@@ -15,7 +15,6 @@
 #include <algorithm>
 
 static std::string flag_list_regexp = "";
-static std::string flag_init_regexp = ".*";
 static std::string flag_test_regexp = ".*";
 static std::string flag_test_bench_regexp = "";
 static std::string flag_test_bench_benchtime_second = "1";
@@ -232,7 +231,6 @@ static void usage(int argc, char* argv[]) {
 
 	printf("Usage: %s\n", getBaseName(argv[0]));
 	printf("  [-list=.*]\n");
-	printf("  [-init=.*]\n");
 	printf("  [-test=.*]\n");
 	printf("  [-test.bench=]\n");
 	printf("  [-test.benchtime=1second]\n");
@@ -254,10 +252,6 @@ int main(int argc, char* argv[]) {
 			flag_list_regexp = ".*";
 			break;
 		}
-		if(argv[i] == std::string("-init")) {
-			flag_init_regexp = ".*";
-			continue;
-		}
 		if(argv[i] == std::string("-test")) {
 			flag_test_regexp = ".*";
 			continue;
@@ -269,10 +263,6 @@ int main(int argc, char* argv[]) {
 
 		if(strHasPrefix(argv[i], "-list=")) {
 			flag_list_regexp = argv[i]+sizeof("-list=")-1;
-			continue;
-		}
-		if(strHasPrefix(argv[i], "-init=")) {
-			flag_init_regexp = argv[i]+sizeof("-init=")-1;
 			continue;
 		}
 		if(strHasPrefix(argv[i], "-test=")) {
@@ -307,6 +297,14 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		for(int id = 0; id < ntests; ++id) {
+			if(std::string(tests[id].type) == "exit") {
+				if(match(flag_list_regexp.c_str(), tests[id].name) != 0) {
+					printf("[exit] %s\n", tests[id].name);
+					total++;
+				}
+			}
+		}
+		for(int id = 0; id < ntests; ++id) {
 			if(std::string(tests[id].type) == "test") {
 				if(match(flag_list_regexp.c_str(), tests[id].name) != 0) {
 					printf("[test] %s\n", tests[id].name);
@@ -327,15 +325,11 @@ int main(int argc, char* argv[]) {
 	}
 
 	// run init func
-	if(!flag_init_regexp.empty()) {
-		for(int id = 0; id < ntests; ++id) {
-			if(std::string(tests[id].type) == "init") {
-				if(match(flag_init_regexp.c_str(), tests[id].name) != 0) {
-					printf("[init] %s ", tests[id].name);
-					tests[id].fn();
-					printf("ok\n");
-				}
-			}
+	for(int id = 0; id < ntests; ++id) {
+		if(std::string(tests[id].type) == "init") {
+			printf("[init] %s ", tests[id].name);
+			tests[id].fn();
+			printf("\n");
 		}
 	}
 
@@ -361,6 +355,15 @@ int main(int argc, char* argv[]) {
 					benchRun(id);
 				}
 			}
+		}
+	}
+
+	// run exit func
+	for(int id = 0; id < ntests; ++id) {
+		if(std::string(tests[id].type) == "exit") {
+			printf("[exit] %s ", tests[id].name);
+			tests[id].fn();
+			printf("\n");
 		}
 	}
 

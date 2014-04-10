@@ -10,6 +10,11 @@
 	static TestRegisterer _r_init_##x##y(_init_##x##y, # x "." # y , "init"); \
 	static void _init_##x##y(void)
 
+#define EXIT(x, y) \
+	static void _exit_##x##y(void); \
+	static TestRegisterer _r_exit_##x##y(_exit_##x##y, # x "." # y , "exit"); \
+	static void _exit_##x##y(void)
+
 #define TEST(x, y) \
 	static void _test_##x##y(void); \
 	static TestRegisterer _r_test_##x##y(_test_##x##y, # x "." # y , "test"); \
