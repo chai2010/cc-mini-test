@@ -14,6 +14,7 @@
 #include <string>
 #include <algorithm>
 
+static std::vector<std::string> args;
 static std::string flag_list_regexp = "";
 static std::string flag_test_regexp = ".*";
 static std::string flag_test_bench_regexp = "";
@@ -64,6 +65,10 @@ static int matchhere(const char *regexp, const char *text) {
 	if (regexp[0] == '$' && regexp[1] == '\0') return *text == '\0';
 	if (*text!='\0' && (regexp[0]=='.' || regexp[0]==*text)) return matchhere(regexp+1, text+1);
 	return 0;
+}
+
+const std::vector<std::string>& TestArgs() {
+	return args;
 }
 
 void RegisterTest(void (*fn)(void), const char* name, const char* type) {
@@ -242,6 +247,7 @@ static void usage(int argc, char* argv[]) {
 }
 
 int main(int argc, char* argv[]) {
+	args.assign(argv, argv + argc);
 	for(int i = 1; i < argc; ++i) {
 		if(argv[i] == std::string("-help") || argv[i] == std::string("-h")) {
 			usage(argc, argv);
@@ -281,9 +287,7 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 
-		printf("unknow flag: %s\n", argv[i]);
-		usage(argc, argv);
-		return -1;
+		// ingore user defined flag
 	}
 
 	if(!flag_list_regexp.empty()) {

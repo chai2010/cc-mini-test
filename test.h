@@ -5,6 +5,9 @@
 #ifndef TEST_H_
 #define TEST_H_
 
+#include <string>
+#include <vector>
+
 #define INIT(x, y) \
 	static void _init_##x##y(void); \
 	static TestRegisterer _r_init_##x##y(_init_##x##y, # x "." # y , "init"); \
@@ -36,6 +39,8 @@
 #	define ASSERT_STREQ_MSG(x, y, fmt, ...) TestAssertStrEQ((x), (y), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #	define ASSERT_NEAR_MSG(x, y, abs_error, fmt, ...) TestAssertNear((x), (y), (abs_error), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #endif
+
+const std::vector<std::string>& TestArgs();
 
 void RegisterTest(void (*fn)(void), const char *name, const char *type);
 
