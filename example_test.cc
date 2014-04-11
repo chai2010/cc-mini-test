@@ -51,7 +51,7 @@ INIT(Fibonacci, initx) {
 	// do some init work
 }
 EXIT(Fibonacci, exit) {
-	// do some clear work
+	// do some clean work
 }
 
 TEST(Fibonacci, TestInit) {

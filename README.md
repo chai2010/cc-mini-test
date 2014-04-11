@@ -101,7 +101,7 @@ We can use `INIT` define a init func, and use `EXIT` define a exit func:
 		// do some init work
 	}
 	EXIT(Fibonacci, exit) {
-		// do some clear work
+		// do some clean work
 	}
 
 The init funcs run before the tests, the exit funcs run after the tests.
