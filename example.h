@@ -8,3 +8,6 @@ int Sum(int a, int b);
 // 1, 1, 2, 3, 5, 8, ...
 int FibonacciSlow(int n);
 int FibonacciFast(int n);
+
+float FindMinValueSlow(float array[8]);
+float FindMinValueFast(float array[8]);

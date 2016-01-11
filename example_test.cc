@@ -109,3 +109,30 @@ BENCH(Fibonacci, Fast15) {
 	}
 }
 
+TEST(FindMinValue, Slow) {
+	float arr0[8] = { 8, 7, 6, -6, -8, -10, 100, 2 };
+	ASSERT_TRUE(FindMinValueSlow(arr0) == 2);
+	
+	float arr1[8] = { 8, 7, 6, -6, -8, -10, 100, -1 };
+	ASSERT_TRUE(FindMinValueSlow(arr1) == -1);
+}
+TEST(FindMinValue, Fast) {
+	float arr0[8] = { 8, 7, 6, -6, -8, -10, 100, 2 };
+	ASSERT_TRUE(FindMinValueFast(arr0) == 2);
+	
+	float arr1[8] = { 8, 7, 6, -6, -8, -10, 100, -1 };
+	ASSERT_TRUE(FindMinValueFast(arr1) == -1);
+}
+
+BENCH(FindMinValue, Slow) {
+	float arr[8] = { 8, 7, 6, -6, -8, -10, 100, 2 };
+	for(int i = 0; i < BenchN(); ++i) {
+		FindMinValueSlow(arr);
+	}
+}
+BENCH(FindMinValue, Fast) {
+	float arr[8] = { 8, 7, 6, -6, -8, -10, 100, 2 };
+	for(int i = 0; i < BenchN(); ++i) {
+		FindMinValueFast(arr);
+	}
+}
