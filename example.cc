@@ -5,6 +5,7 @@
 #include "example.h"
 
 #include <math.h>
+#include <stdint.h>
 
 int Sum(int a, int b) {
 	return a+b;
@@ -36,18 +37,18 @@ float FindMinValueSlow(float array[8]) {
 float FindMinValueFast(float array[8]) {
 	union MyFloat {
 		struct ieee754 {
-			unsigned int asLong:31;
-			unsigned int sign:1;
+			uint32_t asLong:31;
+			uint32_t sign:1;
 		} raw;
 		float f;
 	};
 
 	float minValue = array[0];
-	long minValueAbs = ((MyFloat*)(&minValue))->raw.asLong;
+	uint32_t minValueAbs = ((MyFloat*)(&minValue))->raw.asLong;
 
 	for(int i = 1; i < 8; ++i) {
 		float v = array[i];
-		long vAbs = ((MyFloat*)(&v))->raw.asLong;
+		uint32_t vAbs = ((MyFloat*)(&v))->raw.asLong;
 		if(vAbs < minValueAbs) {
 			minValue = v;
 			minValueAbs = vAbs;
