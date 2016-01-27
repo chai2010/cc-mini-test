@@ -246,7 +246,7 @@ static void usage(int argc, char* argv[]) {
 	printf("Report bugs to <chaishushan{AT}gmail.com>.\n");
 }
 
-int main(int argc, char* argv[]) {
+int TestMain(int argc, char* argv[]) {
 	args.assign(argv, argv + argc);
 	for(int i = 1; i < argc; ++i) {
 		if(argv[i] == std::string("-help") || argv[i] == std::string("-h")) {
@@ -373,4 +373,8 @@ int main(int argc, char* argv[]) {
 
 	printf("PASS\n");
 	return 0;
+}
+
+int TEST_MAIN(int argc, char* argv[]) {
+	return TestMain(argc, argv);
 }
