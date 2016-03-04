@@ -169,12 +169,6 @@ Thanks!
 #	define ASSERT_NEAR_MSG(x, y, abs_error, fmt, ...) TestAssertNear((x), (y), (abs_error), __FILE__, __LINE__, (fmt), __VA_ARGS__)
 #endif
 
-#ifdef TEST_IS_LIB
-#	define TEST_MAIN __TestMain
-#else
-#	define TEST_MAIN main
-#endif
-
 const std::vector<std::string>& TestArgs();
 
 void RegisterTest(void (*fn)(void), const char *name, const char *type);

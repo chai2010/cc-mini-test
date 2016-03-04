@@ -4,9 +4,18 @@
 
 project(TEST)
 
-add_executable(test_app
-  ./example_test.cc
-  ./example.cc
-
-  ./test.cc
+add_library(cc-mini-test
+	./test.cc
 )
+
+add_executable(cc-mini-test-example
+	./example_test.cc
+	./example.cc
+
+	./test_main.cc
+)
+
+target_link_libraries(cc-mini-test-example
+	cc-mini-test
+)
+

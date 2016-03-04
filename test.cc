@@ -374,7 +374,3 @@ int TestMain(int argc, char* argv[]) {
 	printf("PASS\n");
 	return 0;
 }
-
-int TEST_MAIN(int argc, char* argv[]) {
-	return TestMain(argc, argv);
-}
