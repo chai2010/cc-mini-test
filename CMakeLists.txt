@@ -7,6 +7,9 @@ project(TEST)
 add_library(cc-mini-test
 	./test.cc
 )
+add_library(cc-mini-test-main
+	./test_main.cc
+)
 
 add_executable(cc-mini-test-example
 	./example_test.cc
